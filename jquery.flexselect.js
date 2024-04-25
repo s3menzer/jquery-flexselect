@@ -29,7 +29,9 @@
       showDisabledOptions: false,
       inputIdTransform:    function(id)   { return id + "_flexselect"; },
       inputNameTransform:  function(name) { return; },
-      dropdownIdTransform: function(id)   { return id + "_flexselect_dropdown"; }
+      dropdownIdTransform: function(id)   { return id + "_flexselect_dropdown"; },
+      score : 0,
+      placeholder: ''
     },
     select: null,
     input: null,
@@ -68,7 +70,7 @@
     renderControls: function() {
       var selected = this.settings.preSelection ? this.select.find("option:selected") : null;
 
-      this.input = $("<input type='text' autocomplete='off' />").attr({
+      this.input = $("<input type='text' placeholder='" + this.settings.placeholder + "' autocomplete='off' />").attr({
         id: this.settings.inputIdTransform(this.select.attr("id")),
         name: this.settings.inputNameTransform(this.select.attr("name")),
         accesskey: this.select.attr("accesskey"),
@@ -201,12 +203,15 @@
       });
 
       var input = this.input;
+      const thiz = this;
       this.select.change(function () {
-        input.val($.trim($(this).find('option:selected').text()));
+        if (!thiz.settings.allowMismatch)
+          input.val($.trim($(this).find('option:selected').text()));
       });
     },
 
     filterResults: function() {
+      const thiz = this;
       var showDisabled = this.settings.showDisabledOptions;
       var abbreviation = $.trim(this.input.val());
       var sortByMechanism = (abbreviation == "") ? this.settings.blankSortBy : this.settings.sortBy;
@@ -216,7 +221,7 @@
       $.each(this.cache, function() {
         if (this.disabled && !showDisabled) return;
         this.score = LiquidMetal.score(this.text, abbreviation);
-        if (this.score > 0.0) results.push(this);
+        if (this.score > thiz.settings.score) results.push(this);
       });
       this.results = results;
 
@@ -312,7 +317,7 @@
         this.setValue(selected.value);
         this.picked = true;
       } else if (this.settings.allowMismatch) {
-        this.setValue.val("");
+        this.setValue("");
       } else {
         this.reset();
       }
