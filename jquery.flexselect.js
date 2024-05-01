@@ -106,7 +106,7 @@
 
       this.input.focus(function() {
         self.abbreviationBeforeFocus = self.input.val();
-        self.input[0].setSelectionRange(0, self.input.val().length);
+        //self.input[0].setSelectionRange(0, self.input.val().length);
         if (!self.picked || self.input.val() == '') self.filterResults();
       });
 
@@ -172,6 +172,7 @@
         }
       });
 
+      const thiz = this;
       this.input.keydown(function(event) {
         switch (event.keyCode) {
           case 9:  // tab
@@ -195,6 +196,11 @@
             self.moveSelected(1);
             break;
           case 13: // return
+            console.log("ENTER");
+            event.preventDefault();
+            event.stopPropagation();
+            if (thiz.settings.cbReturnKey != undefined) thiz.settings.cbReturnKey();
+            break;
           case 27: // esc
             event.preventDefault();
             event.stopPropagation();
@@ -203,7 +209,6 @@
       });
 
       var input = this.input;
-      const thiz = this;
       this.select.change(function () {
         if (!thiz.settings.allowMismatch)
           input.val($.trim($(this).find('option:selected').text()));
