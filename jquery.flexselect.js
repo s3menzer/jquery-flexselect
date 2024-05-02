@@ -160,6 +160,7 @@
             event.preventDefault();
             self.pickSelected();
             self.focusAndHide();
+            if (thiz.settings.cbReturnKey != undefined) thiz.settings.cbReturnKey();
             break;
           case 27: // esc
             event.preventDefault();
@@ -199,7 +200,6 @@
             console.log("ENTER");
             event.preventDefault();
             event.stopPropagation();
-            if (thiz.settings.cbReturnKey != undefined) thiz.settings.cbReturnKey();
             break;
           case 27: // esc
             event.preventDefault();
